@@ -22,7 +22,7 @@ export const getProject = async (req: AuthRequest, res: Response, next: NextFunc
 
 export const createProject = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const project = await projectsService.createProject(req.body, req.user!.id);
+    const project = await projectsService.createProject(req.body, req.user!.id, req.user!.role);
     res.status(201).json({ success: true, data: project });
   } catch (err) {
     next(err);

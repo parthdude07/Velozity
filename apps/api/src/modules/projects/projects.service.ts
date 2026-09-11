@@ -72,10 +72,19 @@ export const getProjectById = async (id: string, userId: string, role: Role) => 
   return project;
 };
 
-export const createProject = async (input: CreateProjectInput, createdById: string) => {
+export const createProject = async (input: CreateProjectInput, createdById: string, role: Role) => {
   // Verify client exists
   const client = await prisma.client.findUnique({ where: { id: input.clientId } });
   if (!client) throw createError('Client not found', 404, 'NOT_FOUND');
+
+  // Determine owner (createdById)
+  let ownerId = createdById;
+  if (role === 'ADMIN' && input.pmId) {
+    // Verify PM exists
+    const pm = await prisma.user.findUnique({ where: { id: input.pmId } });
+    if (!pm || pm.role !== 'PM') throw createError('Assigned user must be a PM', 400, 'BAD_REQUEST');
+    ownerId = input.pmId;
+  }
 
   return prisma.project.create({
     data: {
@@ -83,7 +92,7 @@ export const createProject = async (input: CreateProjectInput, createdById: stri
       description: input.description,
       status: input.status,
       clientId: input.clientId,
-      createdById,
+      createdById: ownerId,
     },
     select: projectSelect,
   });
@@ -99,9 +108,22 @@ export const updateProject = async (
   const existing = await prisma.project.findFirst({ where });
   if (!existing) throw createError('Project not found or access denied', 404, 'NOT_FOUND');
 
+  const dataToUpdate: any = {
+    name: input.name,
+    description: input.description,
+    status: input.status,
+    clientId: input.clientId,
+  };
+
+  if (role === 'ADMIN' && input.pmId) {
+    const pm = await prisma.user.findUnique({ where: { id: input.pmId } });
+    if (!pm || pm.role !== 'PM') throw createError('Assigned user must be a PM', 400, 'BAD_REQUEST');
+    dataToUpdate.createdById = input.pmId;
+  }
+
   return prisma.project.update({
     where: { id },
-    data: input,
+    data: dataToUpdate,
     select: projectSelect,
   });
 };

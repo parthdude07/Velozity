@@ -158,6 +158,11 @@ export const updateTask = async (
       (k) => !allowedKeys.includes(k as (typeof allowedKeys)[number])
     );
     if (hasDisallowedKey) throw createError('Developers can only update task status', 403, 'FORBIDDEN');
+    
+    // Prevent developers from moving task to DONE
+    if (input.status === 'DONE') {
+      throw createError('Only Project Managers or Admins can mark tasks as DONE', 403, 'FORBIDDEN');
+    }
   }
 
   const statusChanged = input.status && input.status !== existing.status;

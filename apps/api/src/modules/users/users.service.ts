@@ -29,3 +29,51 @@ export const getUserById = async (id: string) => {
 export const getOnlineCount = async () => {
   return prisma.user.count({ where: { isOnline: true } });
 };
+
+import bcrypt from 'bcryptjs';
+import type { CreateUserInput, UpdateUserInput } from './users.schema';
+
+export const createUser = async (input: CreateUserInput) => {
+  const existing = await prisma.user.findUnique({ where: { email: input.email } });
+  if (existing) throw createError('User with this email already exists', 400, 'BAD_REQUEST');
+
+  const hashedPassword = await bcrypt.hash(input.password, 10);
+  const user = await prisma.user.create({
+    data: {
+      name: input.name,
+      email: input.email,
+      password: hashedPassword,
+      role: input.role,
+    },
+    select: { id: true, name: true, email: true, role: true, createdAt: true },
+  });
+  return user;
+};
+
+export const updateUser = async (id: string, input: UpdateUserInput) => {
+  const user = await prisma.user.findUnique({ where: { id } });
+  if (!user) throw createError('User not found', 404, 'NOT_FOUND');
+
+  if (input.email && input.email !== user.email) {
+    const existing = await prisma.user.findUnique({ where: { email: input.email } });
+    if (existing) throw createError('Email already taken', 400, 'BAD_REQUEST');
+  }
+
+  const dataToUpdate: any = { ...input };
+  if (input.password) {
+    dataToUpdate.password = await bcrypt.hash(input.password, 10);
+  }
+
+  return prisma.user.update({
+    where: { id },
+    data: dataToUpdate,
+    select: { id: true, name: true, email: true, role: true, createdAt: true },
+  });
+};
+
+export const deleteUser = async (id: string) => {
+  const user = await prisma.user.findUnique({ where: { id } });
+  if (!user) throw createError('User not found', 404, 'NOT_FOUND');
+
+  await prisma.user.delete({ where: { id } });
+};
