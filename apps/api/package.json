@@ -4,7 +4,7 @@
   "description": "Velozity Dashboard API",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only --exit-child -r tsconfig-paths/register src/index.ts",
+    "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "db:migrate": "prisma migrate dev",
