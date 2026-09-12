@@ -1,4 +1,4 @@
-# Velozity Global Solutions - Real-Time Dashboard
+# Velozity  - Real-Time Dashboard
 
 A full-stack, real-time client project dashboard built for an internal agency team to manage clients, track task progress, and monitor team activity. 
 
