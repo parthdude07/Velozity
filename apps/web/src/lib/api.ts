@@ -1,8 +1,10 @@
 import axios from 'axios';
 import { useAuthStore } from '../store/authStore';
 
+const API_URL = import.meta.env.VITE_API_URL || '/api';
+
 export const api = axios.create({
-  baseURL: '/api',
+  baseURL: API_URL,
   withCredentials: true, // send HttpOnly refresh cookie
   headers: { 'Content-Type': 'application/json' },
 });
@@ -47,7 +49,7 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const { data } = await axios.post('/api/auth/refresh', {}, { withCredentials: true });
+        const { data } = await axios.post(`${API_URL}/auth/refresh`, {}, { withCredentials: true });
         const newToken = data.data.accessToken;
         useAuthStore.getState().setAccessToken(newToken);
         processQueue(null, newToken);
