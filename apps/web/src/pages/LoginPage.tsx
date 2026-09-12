@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, Zap, Eye, EyeOff } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
+import { api } from '../lib/api';
 import { useAuthStore } from '../store/authStore';
 import { connectSocket } from '../lib/socket';
 import { Spinner } from '../components/ui';
@@ -18,10 +19,9 @@ export const LoginPage: React.FC = () => {
 
   const loginMutation = useMutation({
     mutationFn: async () => {
-      const { data } = await axios.post<ApiResponse<{ user: User; accessToken: string }>>(
-        '/api/auth/login',
-        { email, password },
-        { withCredentials: true }
+      const { data } = await api.post<ApiResponse<{ user: User; accessToken: string }>>(
+        '/auth/login',
+        { email, password }
       );
       return data.data;
     },
