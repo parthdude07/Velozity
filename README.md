@@ -155,18 +155,13 @@ npm install
 ```
 
 #### Step 2: Configure Environment Variables
-You need to set up `.env` files for both the API and the Web app.
+You need to set up the `.env` file for the API.
 
 **For the API:**
 ```bash
 cp apps/api/.env.example apps/api/.env
 ```
-*(The defaults in `.env.example` will work perfectly with the local Docker database provided).*
-
-**For the Web App:**
-```bash
-cp apps/web/.env.example apps/web/.env
-```
+*(The defaults in `.env.example` will work perfectly with the local Docker database provided. The web app does not require an environment file as it uses a local proxy).*
 
 #### Step 3: Start the Database
 Start the PostgreSQL database container in the background using Docker Compose:
