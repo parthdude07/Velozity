@@ -1,0 +1,39 @@
+services:
+  - type: web
+    name: velozity-api
+    runtime: docker
+    dockerContext: ./apps/api
+    dockerfilePath: ./apps/api/Dockerfile.render
+    plan: starter
+    healthCheckPath: /health
+    disk:
+      name: velozity-pgdata
+      mountPath: /var/lib/postgresql/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: JWT_ACCESS_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: JWT_ACCESS_EXPIRES_IN
+        value: 15m
+      - key: JWT_REFRESH_EXPIRES_IN
+        value: 7d
+      - key: CLIENT_URL
+        value: https://velozity-web.onrender.com
+
+  - type: web
+    name: velozity-web
+    runtime: docker
+    dockerContext: ./apps/web
+    dockerfilePath: ./apps/web/Dockerfile
+    plan: starter
+    envVars:
+      - key: VITE_API_URL
+        value: https://velozity-api.onrender.com/api
+      - key: VITE_SOCKET_URL
+        value: https://velozity-api.onrender.com
