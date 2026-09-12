@@ -139,24 +139,30 @@ export const deleteProject = async (id: string, userId: string, role: Role) => {
 export const getDashboardStats = async (userId: string, role: Role) => {
   const where = await buildWhereForRole(userId, role);
 
-  const [totalProjects, taskStats, overdueCount] = await Promise.all([
+  const taskWhere = {
+    project: where,
+    ...(role === 'DEVELOPER' ? { assigneeId: userId } : {}),
+  };
+
+  const [totalProjects, taskStats, priorityStats, overdueCount] = await Promise.all([
     prisma.project.count({ where }),
     prisma.task.groupBy({
       by: ['status'],
       _count: true,
-      where: {
-        project: where,
-        ...(role === 'DEVELOPER' ? { assigneeId: userId } : {}),
-      },
+      where: taskWhere,
+    }),
+    prisma.task.groupBy({
+      by: ['priority'],
+      _count: true,
+      where: taskWhere,
     }),
     prisma.task.count({
       where: {
         isOverdue: true,
-        project: where,
-        ...(role === 'DEVELOPER' ? { assigneeId: userId } : {}),
+        ...taskWhere,
       },
     }),
   ]);
 
-  return { totalProjects, taskStats, overdueCount };
+  return { totalProjects, taskStats, priorityStats, overdueCount };
 };

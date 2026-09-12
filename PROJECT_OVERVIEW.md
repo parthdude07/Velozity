@@ -28,6 +28,7 @@ Velozity is built as a robust Monorepo (npm workspaces) utilizing modern web tec
 - **Data Fetching:** TanStack React Query v5
 - **Styling:** Custom Vanilla CSS (Design system, tokens, flex/grid layouts)
 - **Icons:** Lucide React
+- **Testing:** Vitest
 
 ### Backend (`apps/api`)
 - **Runtime:** Node.js (Express.js)
@@ -37,3 +38,4 @@ Velozity is built as a robust Monorepo (npm workspaces) utilizing modern web tec
 - **Validation:** Zod
 - **Authentication:** JWT (JSON Web Tokens) with Access/Refresh strategy
 - **Background Jobs:** Node-Cron (for automated overdue task flagging)
+- **Testing:** Vitest

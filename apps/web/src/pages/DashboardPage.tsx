@@ -74,6 +74,9 @@ export const DashboardPage: React.FC = () => {
   const getTaskCount = (status: string) =>
     stats?.taskStats.find((s) => s.status === status)?._count ?? 0;
 
+  const getPriorityCount = (priority: string) =>
+    stats?.priorityStats?.find((s) => s.priority === priority)?._count ?? 0;
+
   const totalTasks = stats?.taskStats.reduce((acc, s) => acc + s._count, 0) ?? 0;
 
   const upcomingTasks = tasks?.filter((t) => {
@@ -141,7 +144,7 @@ export const DashboardPage: React.FC = () => {
       </div>
 
       {/* Task Status Breakdown */}
-      <div className="grid-2 mb-6">
+      <div className={`mb-6 ${user?.role === 'PM' ? 'grid-3' : 'grid-2'}`}>
         {/* Status breakdown */}
         <div className="card">
           <div className="card-header">
@@ -163,6 +166,30 @@ export const DashboardPage: React.FC = () => {
             );
           })}
         </div>
+
+        {/* Priority breakdown (PM only) */}
+        {user?.role === 'PM' && (
+          <div className="card">
+            <div className="card-header">
+              <span className="card-title">Task Priority Breakdown</span>
+            </div>
+            {['CRITICAL', 'HIGH', 'MEDIUM', 'LOW'].map((p) => {
+              const count = getPriorityCount(p);
+              const pct = totalTasks > 0 ? Math.round((count / totalTasks) * 100) : 0;
+              return (
+                <div key={p} style={{ marginBottom: '0.85rem' }}>
+                  <div className="flex items-center justify-between mb-1">
+                    <PriorityBadge priority={p as 'LOW'} />
+                    <span className="text-xs text-muted">{count} · {pct}%</span>
+                  </div>
+                  <div className="progress-bar">
+                    <div className="progress-fill" style={{ width: `${pct}%`, background: 'var(--primary-light)' }} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
 
         {/* Upcoming due dates */}
         <div className="card">

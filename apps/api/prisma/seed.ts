@@ -98,7 +98,7 @@ async function main() {
   console.log('🏢 Created 3 clients');
 
   // ─── Projects ─────────────────────────────────────────────────────────────
-  const [project1, project2, project3] = await Promise.all([
+  const [project1, project2, project3, project4] = await Promise.all([
     prisma.project.create({
       data: {
         name: 'E-Commerce Platform Redesign',
@@ -126,8 +126,17 @@ async function main() {
         createdById: pm2.id,
       },
     }),
+    prisma.project.create({
+      data: {
+        name: 'Mobile App Redesign',
+        description: 'Full redesign of the legacy mobile app in React Native',
+        status: ProjectStatus.ACTIVE,
+        clientId: client1.id,
+        createdById: pm2.id,
+      },
+    }),
   ]);
-  console.log('📁 Created 3 projects');
+  console.log('📁 Created 4 projects');
 
   // ─── Tasks — Project 1 (E-Commerce) ───────────────────────────────────────
   const now = new Date();
@@ -317,7 +326,84 @@ async function main() {
     }),
   ]);
 
-  console.log('✅ Created 15 tasks (2 overdue, various statuses)');
+  // ─── Tasks — Project 4 (Mobile App) ───────────────────────────────────────
+  const p4Tasks = await Promise.all([
+    prisma.task.create({
+      data: {
+        title: 'Setup React Native CLI',
+        description: 'Initialize the new React Native project',
+        status: TaskStatus.DONE,
+        priority: TaskPriority.MEDIUM,
+        dueDate: past(10),
+        isOverdue: false,
+        projectId: project4.id,
+        assigneeId: dev1.id,
+      },
+    }),
+    prisma.task.create({
+      data: {
+        title: 'Login Screen UI',
+        description: 'Create the login screen UI based on Figma',
+        status: TaskStatus.IN_REVIEW,
+        priority: TaskPriority.HIGH,
+        dueDate: past(1),
+        isOverdue: false,
+        projectId: project4.id,
+        assigneeId: dev3.id,
+      },
+    }),
+    prisma.task.create({
+      data: {
+        title: 'API Client integration',
+        description: 'Setup Axios with interceptors',
+        status: TaskStatus.IN_PROGRESS,
+        priority: TaskPriority.CRITICAL,
+        dueDate: future(2),
+        isOverdue: false,
+        projectId: project4.id,
+        assigneeId: dev4.id,
+      },
+    }),
+    prisma.task.create({
+      data: {
+        title: 'Push Notifications setup',
+        description: 'Integrate Firebase Cloud Messaging',
+        status: TaskStatus.TODO,
+        priority: TaskPriority.MEDIUM,
+        dueDate: future(5),
+        isOverdue: false,
+        projectId: project4.id,
+        assigneeId: dev1.id,
+      },
+    }),
+    prisma.task.create({
+      data: {
+        title: 'CI/CD Fastlane',
+        description: 'Automate app store deployments',
+        status: TaskStatus.TODO,
+        priority: TaskPriority.LOW,
+        dueDate: future(10),
+        isOverdue: false,
+        projectId: project4.id,
+        assigneeId: dev2.id,
+      },
+    }),
+    // OVERDUE task #3
+    prisma.task.create({
+      data: {
+        title: 'Offline Storage configuration',
+        description: 'Setup SQLite for offline mode',
+        status: TaskStatus.IN_PROGRESS,
+        priority: TaskPriority.HIGH,
+        dueDate: past(2),
+        isOverdue: true,
+        projectId: project4.id,
+        assigneeId: dev2.id,
+      },
+    }),
+  ]);
+
+  console.log('✅ Created 21 tasks (3 overdue, various statuses)');
 
   // ─── Pre-seed Activity Logs ────────────────────────────────────────────────
   const activityLogs = [
@@ -405,6 +491,25 @@ async function main() {
       message: `Meera Joshi moved "Risk assessment algorithm" from To Do → In Progress`,
       createdAt: past(3),
     },
+    // Project 4 activity
+    {
+      taskId: p4Tasks[0].id,
+      projectId: project4.id,
+      userId: dev1.id,
+      fromStatus: TaskStatus.IN_PROGRESS,
+      toStatus: TaskStatus.DONE,
+      message: `Ravi Kumar moved "Setup React Native CLI" from In Progress → Done`,
+      createdAt: past(9),
+    },
+    {
+      taskId: p4Tasks[1].id,
+      projectId: project4.id,
+      userId: dev3.id,
+      fromStatus: TaskStatus.IN_PROGRESS,
+      toStatus: TaskStatus.IN_REVIEW,
+      message: `Arjun Nair moved "Login Screen UI" from In Progress → In Review`,
+      createdAt: past(1),
+    },
   ];
 
   await prisma.activityLog.createMany({ data: activityLogs });
@@ -423,6 +528,9 @@ async function main() {
       { userId: dev4.id, taskId: p2Tasks[2].id, message: 'You have been assigned to task "Sustainability report PDF export"', isRead: false },
       { userId: pm2.id, taskId: p3Tasks[0].id, message: 'Task "Portfolio performance chart component" has been moved to In Review', isRead: false },
       { userId: dev4.id, taskId: p3Tasks[1].id, message: 'You have been assigned to task "Risk assessment algorithm"', isRead: false },
+      { userId: dev1.id, taskId: p4Tasks[0].id, message: 'You have been assigned to task "Setup React Native CLI"', isRead: true },
+      { userId: dev3.id, taskId: p4Tasks[1].id, message: 'You have been assigned to task "Login Screen UI"', isRead: true },
+      { userId: pm2.id, taskId: p4Tasks[1].id, message: 'Task "Login Screen UI" has been moved to In Review', isRead: false },
     ],
   });
   console.log('🔔 Created pre-seeded notifications');

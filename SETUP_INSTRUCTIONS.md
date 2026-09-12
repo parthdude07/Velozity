@@ -70,7 +70,20 @@ npm run dev:web
 
 🎉 The application is now fully running. Navigate to `http://localhost:5173` in your browser.
 
-### Step 6: Stop the Application
+### Step 6: Running Tests
+The project uses Vitest for unit testing critical sections of both the API and the Web app.
+
+**Run Backend API Tests:**
+```bash
+npm run test --workspace=apps/api
+```
+
+**Run Frontend Web App Tests:**
+```bash
+npm run test --workspace=apps/web
+```
+
+### Step 7: Stop the Application
 To gracefully stop the application:
 1. Press `Ctrl + C` in both of your terminal windows running the Web and API servers.
 2. Stop the PostgreSQL database container by running:

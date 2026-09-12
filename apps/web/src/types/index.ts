@@ -80,6 +80,7 @@ export interface Notification {
 export interface DashboardStats {
   totalProjects: number;
   taskStats: Array<{ status: TaskStatus; _count: number }>;
+  priorityStats: Array<{ priority: TaskPriority; _count: number }>;
   overdueCount: number;
 }
 

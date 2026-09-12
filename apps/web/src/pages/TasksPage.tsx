@@ -1,48 +1,75 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
-import { CheckSquare, ListFilter } from 'lucide-react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { CheckSquare, ListFilter, Calendar } from 'lucide-react';
 import { api } from '../lib/api';
 import { EmptyState, Skeleton, PriorityBadge, StatusBadge, Avatar } from '../components/ui';
-import type { ApiResponse, Task, TaskPriority } from '../types';
-
-const PRIORITY_ORDER: Record<TaskPriority, number> = {
-  CRITICAL: 4,
-  HIGH: 3,
-  MEDIUM: 2,
-  LOW: 1,
-};
+import type { ApiResponse, Task } from '../types';
 
 export const TasksPage: React.FC = () => {
   const navigate = useNavigate();
-  const [priorityFilter, setPriorityFilter] = useState<TaskPriority | ''>('');
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const priorityFilter = searchParams.get('priority') || '';
+  const statusFilter = searchParams.get('status') || '';
+  const dueDateFrom = searchParams.get('dueDateFrom') || '';
+  const dueDateTo = searchParams.get('dueDateTo') || '';
+
+  const updateFilter = (key: string, value: string) => {
+    const newParams = new URLSearchParams(searchParams);
+    if (value) newParams.set(key, value);
+    else newParams.delete(key);
+    setSearchParams(newParams);
+  };
 
   const { data: tasks, isLoading } = useQuery({
-    queryKey: ['tasks'],
+    queryKey: ['tasks', priorityFilter, statusFilter, dueDateFrom, dueDateTo],
     queryFn: async () => {
-      const { data } = await api.get<ApiResponse<Task[]>>('/tasks');
+      const { data } = await api.get<ApiResponse<Task[]>>('/tasks', {
+        params: {
+          priority: priorityFilter || undefined,
+          status: statusFilter || undefined,
+          dueDateFrom: dueDateFrom || undefined,
+          dueDateTo: dueDateTo || undefined,
+        },
+      });
       return data.data;
     },
   });
 
-  const filteredTasks = tasks
-    ?.filter((task) => (priorityFilter ? task.priority === priorityFilter : true))
-    .sort((a, b) => PRIORITY_ORDER[b.priority] - PRIORITY_ORDER[a.priority]) ?? [];
+  const filteredTasks = tasks ?? [];
 
   return (
     <div>
-      <div className="page-header" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+      <div className="page-header" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <h1>My Tasks</h1>
           <p>{filteredTasks.length} task{filteredTasks.length !== 1 ? 's' : ''}</p>
         </div>
-        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-          <div className="input-icon-wrapper" style={{ width: 180 }}>
+        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+          
+          <div className="input-icon-wrapper" style={{ width: 150 }}>
+            <ListFilter size={16} className="input-icon" />
+            <select
+              className="input"
+              value={statusFilter}
+              onChange={(e) => updateFilter('status', e.target.value)}
+              style={{ paddingLeft: '2.5rem' }}
+            >
+              <option value="">All Statuses</option>
+              <option value="TODO">To Do</option>
+              <option value="IN_PROGRESS">In Progress</option>
+              <option value="IN_REVIEW">In Review</option>
+              <option value="DONE">Done</option>
+            </select>
+          </div>
+
+          <div className="input-icon-wrapper" style={{ width: 150 }}>
             <ListFilter size={16} className="input-icon" />
             <select
               className="input"
               value={priorityFilter}
-              onChange={(e) => setPriorityFilter(e.target.value as TaskPriority | '')}
+              onChange={(e) => updateFilter('priority', e.target.value)}
               style={{ paddingLeft: '2.5rem' }}
             >
               <option value="">All Priorities</option>
@@ -52,6 +79,31 @@ export const TasksPage: React.FC = () => {
               <option value="LOW">Low</option>
             </select>
           </div>
+
+          <div className="input-icon-wrapper" style={{ width: 140 }}>
+            <Calendar size={16} className="input-icon" />
+            <input 
+              type="date" 
+              className="input" 
+              style={{ paddingLeft: '2.5rem', paddingRight: '0.5rem' }}
+              value={dueDateFrom ? dueDateFrom.split('T')[0] : ''} 
+              onChange={(e) => updateFilter('dueDateFrom', e.target.value ? new Date(e.target.value).toISOString() : '')} 
+              title="Due Date From"
+            />
+          </div>
+          <span className="text-secondary">-</span>
+          <div className="input-icon-wrapper" style={{ width: 140 }}>
+            <Calendar size={16} className="input-icon" />
+            <input 
+              type="date" 
+              className="input" 
+              style={{ paddingLeft: '2.5rem', paddingRight: '0.5rem' }}
+              value={dueDateTo ? dueDateTo.split('T')[0] : ''} 
+              onChange={(e) => updateFilter('dueDateTo', e.target.value ? new Date(e.target.value).toISOString() : '')}
+              title="Due Date To"
+            />
+          </div>
+
         </div>
       </div>
 
@@ -65,7 +117,7 @@ export const TasksPage: React.FC = () => {
           ))}
         </div>
       ) : filteredTasks.length === 0 ? (
-        <EmptyState message="No tasks found" icon={<CheckSquare size={48} />} />
+        <EmptyState message="No tasks found matching your filters" icon={<CheckSquare size={48} />} />
       ) : (
         <div className="table-wrapper">
           <table>

@@ -121,8 +121,11 @@ export const LoginPage: React.FC = () => {
           <p className="text-xs text-muted" style={{ marginBottom: '0.5rem', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>Demo credentials</p>
           {[
             { label: 'Admin', email: 'admin@velozity.dev', pass: 'Admin@1234' },
-            { label: 'PM',    email: 'pm1@velozity.dev',   pass: 'Pm1@1234' },
-            { label: 'Dev',   email: 'dev1@velozity.dev',  pass: 'Dev1@1234' },
+            { label: 'PM 1',  email: 'pm1@velozity.dev',   pass: 'Pm1@1234' },
+            { label: 'PM 2',  email: 'pm2@velozity.dev',   pass: 'Pm2@1234' },
+            { label: 'Dev 1', email: 'dev1@velozity.dev',  pass: 'Dev1@1234' },
+            { label: 'Dev 2', email: 'dev2@velozity.dev',  pass: 'Dev2@1234' },
+            { label: 'Dev 3', email: 'dev3@velozity.dev',  pass: 'Dev3@1234' },
           ].map((c) => (
             <button
               key={c.label}
