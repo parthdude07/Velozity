@@ -23,7 +23,7 @@ export const getUnreadCount = async (req: AuthRequest, res: Response, next: Next
 
 export const markRead = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const notification = await notifService.markAsRead(req.params.id, req.user!.id);
+    const notification = await notifService.markAsRead(req.params.id as string, req.user!.id);
     res.json({ success: true, data: notification });
   } catch (err) {
     next(err);

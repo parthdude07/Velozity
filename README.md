@@ -166,7 +166,7 @@ cp apps/api/.env.example apps/api/.env
 #### Step 3: Start the Database
 Start the PostgreSQL database container in the background using Docker Compose:
 ```bash
-docker-compose up -d postgres
+docker compose up -d postgres
 ```
 
 #### Step 4: Initialize and Seed the Database
@@ -218,7 +218,7 @@ To gracefully stop the application:
 1. Press `Ctrl + C` in both of your terminal windows running the Web and API servers.
 2. Stop the PostgreSQL database container by running:
    ```bash
-   docker-compose down
+   docker compose down
    ```
 
 ---
@@ -229,7 +229,7 @@ If you prefer to run the entire stack (Database, API, and Frontend) completely i
 
 #### Start the Stack
 ```bash
-docker-compose up --build -d
+docker compose up --build -d
 ```
 *(Wait a few seconds for the containers to fully start. The Web UI will be available at `http://localhost:5173`)*
 
@@ -243,7 +243,7 @@ docker exec -it velozity_api npm run db:seed
 #### Stop the Stack
 To completely shut down and remove the containers:
 ```bash
-docker-compose down
+docker compose down
 ```
 
 ---

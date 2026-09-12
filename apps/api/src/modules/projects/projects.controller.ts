@@ -13,7 +13,7 @@ export const listProjects = async (req: AuthRequest, res: Response, next: NextFu
 
 export const getProject = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const project = await projectsService.getProjectById(req.params.id, req.user!.id, req.user!.role);
+    const project = await projectsService.getProjectById(req.params.id as string, req.user!.id, req.user!.role);
     res.json({ success: true, data: project });
   } catch (err) {
     next(err);
@@ -31,7 +31,7 @@ export const createProject = async (req: AuthRequest, res: Response, next: NextF
 
 export const updateProject = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const project = await projectsService.updateProject(req.params.id, req.body, req.user!.id, req.user!.role);
+    const project = await projectsService.updateProject(req.params.id as string, req.body, req.user!.id, req.user!.role);
     res.json({ success: true, data: project });
   } catch (err) {
     next(err);
@@ -40,7 +40,7 @@ export const updateProject = async (req: AuthRequest, res: Response, next: NextF
 
 export const deleteProject = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
-    await projectsService.deleteProject(req.params.id, req.user!.id, req.user!.role);
+    await projectsService.deleteProject(req.params.id as string, req.user!.id, req.user!.role);
     res.json({ success: true, message: 'Project deleted' });
   } catch (err) {
     next(err);

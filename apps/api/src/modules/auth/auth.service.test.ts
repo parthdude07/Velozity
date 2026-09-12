@@ -45,7 +45,7 @@ describe('Auth Service', () => {
     };
 
     it('should throw an error if email is already taken', async () => {
-      vi.mocked(prisma.user.findUnique).mockResolvedValueOnce({ id: '1', ...mockInput, password: 'hashed', refreshToken: null, isOnline: false, lastActive: new Date(), createdAt: new Date(), updatedAt: new Date() });
+      vi.mocked(prisma.user.findUnique).mockResolvedValueOnce({ id: '1', ...mockInput, password: 'hashed', refreshToken: null, isOnline: false, createdAt: new Date(), updatedAt: new Date() });
 
       await expect(authService.register(mockInput)).rejects.toThrow('Email already in use');
     });

@@ -17,7 +17,7 @@ export const listUsers = async (req: AuthRequest, res: Response, next: NextFunct
 
 export const getUser = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const user = await usersService.getUserById(req.params.id);
+    const user = await usersService.getUserById(req.params.id as string);
     res.json({ success: true, data: user });
   } catch (err) {
     next(err);
@@ -44,7 +44,7 @@ export const createUser = async (req: AuthRequest, res: Response, next: NextFunc
 
 export const updateUser = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const user = await usersService.updateUser(req.params.id, req.body);
+    const user = await usersService.updateUser(req.params.id as string, req.body);
     res.json({ success: true, data: user });
   } catch (err) {
     next(err);
@@ -53,7 +53,7 @@ export const updateUser = async (req: AuthRequest, res: Response, next: NextFunc
 
 export const deleteUser = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
-    await usersService.deleteUser(req.params.id);
+    await usersService.deleteUser(req.params.id as string);
     res.json({ success: true, message: 'User deleted' });
   } catch (err) {
     next(err);

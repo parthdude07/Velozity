@@ -21,7 +21,7 @@ export const listTasks = async (req: AuthRequest, res: Response, next: NextFunct
 
 export const getTask = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const task = await tasksService.getTaskById(req.params.id, req.user!.id, req.user!.role);
+    const task = await tasksService.getTaskById(req.params.id as string, req.user!.id, req.user!.role);
     res.json({ success: true, data: task });
   } catch (err) {
     next(err);
@@ -39,7 +39,7 @@ export const createTask = async (req: AuthRequest, res: Response, next: NextFunc
 
 export const updateTask = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const task = await tasksService.updateTask(req.params.id, req.body, req.user!.id, req.user!.role);
+    const task = await tasksService.updateTask(req.params.id as string, req.body, req.user!.id, req.user!.role);
     res.json({ success: true, data: task });
   } catch (err) {
     next(err);
@@ -48,7 +48,7 @@ export const updateTask = async (req: AuthRequest, res: Response, next: NextFunc
 
 export const deleteTask = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
-    await tasksService.deleteTask(req.params.id, req.user!.id, req.user!.role);
+    await tasksService.deleteTask(req.params.id as string, req.user!.id, req.user!.role);
     res.json({ success: true, message: 'Task deleted' });
   } catch (err) {
     next(err);

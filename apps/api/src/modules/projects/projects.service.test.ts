@@ -58,7 +58,7 @@ describe('Projects Service', () => {
     const mockInput = {
       name: 'New Project',
       description: 'Desc',
-      status: 'PLANNING' as const,
+      status: 'ACTIVE' as const,
       clientId: 'client-1',
     };
 

@@ -19,61 +19,75 @@ async function main() {
   await prisma.task.deleteMany();
   await prisma.project.deleteMany();
   await prisma.client.deleteMany();
-  await prisma.user.deleteMany();
-  console.log('🗑️  Cleared existing data');
+  // Not deleting users so we preserve existing users
+  console.log('🗑️  Cleared existing data (kept users)');
 
-  // ─── Users ────────────────────────────────────────────────────────────────
+  // ─── Users (Upsert to avoid duplicates) ───────────────────────────────────
   const [admin, pm1, pm2, dev1, dev2, dev3, dev4] = await Promise.all([
-    prisma.user.create({
-      data: {
+    prisma.user.upsert({
+      where: { email: 'admin@velozity.dev' },
+      update: {},
+      create: {
         name: 'Alex Admin',
         email: 'admin@velozity.dev',
         password: await hashPassword('Admin@1234'),
         role: Role.ADMIN,
       },
     }),
-    prisma.user.create({
-      data: {
+    prisma.user.upsert({
+      where: { email: 'pm1@velozity.dev' },
+      update: {},
+      create: {
         name: 'Priya Sharma',
         email: 'pm1@velozity.dev',
         password: await hashPassword('Pm1@1234'),
         role: Role.PM,
       },
     }),
-    prisma.user.create({
-      data: {
+    prisma.user.upsert({
+      where: { email: 'pm2@velozity.dev' },
+      update: {},
+      create: {
         name: 'Rohan Mehta',
         email: 'pm2@velozity.dev',
         password: await hashPassword('Pm2@1234'),
         role: Role.PM,
       },
     }),
-    prisma.user.create({
-      data: {
+    prisma.user.upsert({
+      where: { email: 'dev1@velozity.dev' },
+      update: {},
+      create: {
         name: 'Ravi Kumar',
         email: 'dev1@velozity.dev',
         password: await hashPassword('Dev1@1234'),
         role: Role.DEVELOPER,
       },
     }),
-    prisma.user.create({
-      data: {
+    prisma.user.upsert({
+      where: { email: 'dev2@velozity.dev' },
+      update: {},
+      create: {
         name: 'Sneha Patel',
         email: 'dev2@velozity.dev',
         password: await hashPassword('Dev2@1234'),
         role: Role.DEVELOPER,
       },
     }),
-    prisma.user.create({
-      data: {
+    prisma.user.upsert({
+      where: { email: 'dev3@velozity.dev' },
+      update: {},
+      create: {
         name: 'Arjun Nair',
         email: 'dev3@velozity.dev',
         password: await hashPassword('Dev3@1234'),
         role: Role.DEVELOPER,
       },
     }),
-    prisma.user.create({
-      data: {
+    prisma.user.upsert({
+      where: { email: 'dev4@velozity.dev' },
+      update: {},
+      create: {
         name: 'Meera Joshi',
         email: 'dev4@velozity.dev',
         password: await hashPassword('Dev4@1234'),
@@ -81,7 +95,7 @@ async function main() {
       },
     }),
   ]);
-  console.log('👥 Created 7 users (1 Admin, 2 PMs, 4 Devs)');
+  console.log('👥 Ensured 7 seed users exist (1 Admin, 2 PMs, 4 Devs)');
 
   // ─── Clients ──────────────────────────────────────────────────────────────
   const [client1, client2, client3] = await Promise.all([

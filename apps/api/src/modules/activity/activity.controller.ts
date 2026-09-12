@@ -17,7 +17,7 @@ export const getProjectFeed = async (req: AuthRequest, res: Response, next: Next
   try {
     const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 50;
     const feed = await activityService.getProjectActivity(
-      req.params.projectId,
+      req.params.projectId as string,
       req.user!.id,
       req.user!.role,
       { limit }

@@ -20,6 +20,7 @@ services:
     build:
       context: ./apps/api
       dockerfile: Dockerfile
+      target: dev
     container_name: velozity_api
     depends_on:
       postgres:
@@ -42,6 +43,7 @@ services:
     build:
       context: ./apps/web
       dockerfile: Dockerfile
+      target: dev
     container_name: velozity_web
     environment:
       VITE_API_URL: http://localhost:5000/api
