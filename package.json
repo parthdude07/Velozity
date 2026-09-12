@@ -8,8 +8,10 @@
     "apps/web"
   ],
   "scripts": {
+    "docker:up": "docker compose up --build -d && echo \"\\n🚀 Project successfully started! Access the Web UI at: http://localhost:5173\\n\"",
+    "docker:down": "docker compose down",
     "dev:api": "npm run dev --workspace=apps/api",
-    "dev:web": "npm run dev --workspace=apps/web",
+    "dev:web": "echo \"\\n🚀 Starting Web UI! Access it at: http://localhost:5173\\n\" && npm run dev --workspace=apps/web",
     "build:api": "npm run build --workspace=apps/api",
     "build:web": "npm run build --workspace=apps/web",
     "db:migrate": "npm run db:migrate --workspace=apps/api",

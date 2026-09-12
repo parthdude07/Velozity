@@ -6,6 +6,22 @@ This project implements strict Role-Based Access Control (RBAC), WebSocket-based
 
 ---
 
+## 🌍 Live Deployment
+
+The application is currently deployed on **Render**:
+- **Frontend Web UI:** [https://velozity-web.onrender.com](https://velozity-web.onrender.com)
+- **Backend API:** [https://velozity-1-5ouy.onrender.com](https://velozity-1-5ouy.onrender.com)
+
+> [!NOTE]
+> **Cold Starts:** Because the project uses Render's free tier, the server may spin down after a period of inactivity. **Please wait a few seconds** (up to a minute) for the project to wake up and become active when you first load the live demo.
+
+> [!IMPORTANT]
+> **Why Render and not Vercel?** The deployment was moved to Render because Vercel's serverless environment caused Cross-Origin (CORS) errors and WebSocket connection timeouts for the real-time features.
+
+If you prefer to run the project locally, please ensure you are on the GitHub `main` branch and refer to the **Setup and Run Instructions** at the bottom of this README.
+
+---
+
 ## 🚀 Tech Stack
 
 ### Frontend
@@ -144,7 +160,34 @@ This guide provides step-by-step instructions to setup, seed, run, and stop the 
 
 ---
 
-### 1. Local Development Setup (Recommended)
+### 1. Full Docker Setup (Recommended)
+
+If you prefer to run the entire stack (Database, API, and Frontend) completely inside Docker containers, use this method.
+
+#### Start the Stack
+You can use the helper script which builds, starts the containers, and prints the URL to the terminal:
+```bash
+npm run docker:up
+```
+*(Alternatively, you can run `docker compose up --build -d` directly)*
+*(Wait a few seconds for the containers to fully start. The Web UI will be available at `http://localhost:5173`)*
+
+#### Seed the Database (Inside Docker)
+Even when running fully inside Docker, you need to migrate and seed the database on your first run:
+```bash
+docker exec -it velozity_api npm run db:migrate
+docker exec -it velozity_api npm run db:seed
+```
+
+#### Stop the Stack
+To completely shut down and remove the containers:
+```bash
+docker compose down
+```
+
+---
+
+### 2. Local Development Setup (Alternative)
 
 Follow these steps to run the API and Web App locally for development while using Docker exclusively for the PostgreSQL database.
 
@@ -196,6 +239,7 @@ npm run dev:api
 ```bash
 npm run dev:web
 ```
+*(The terminal will print `🚀 Starting Web UI! Access it at: http://localhost:5173` and start the server)*
 *(Runs on `http://localhost:5173`)*
 
 🎉 The application is now fully running. Navigate to `http://localhost:5173` in your browser.
@@ -220,31 +264,6 @@ To gracefully stop the application:
    ```bash
    docker compose down
    ```
-
----
-
-### 2. Full Docker Setup (Alternative)
-
-If you prefer to run the entire stack (Database, API, and Frontend) completely inside Docker containers, use this method.
-
-#### Start the Stack
-```bash
-docker compose up --build -d
-```
-*(Wait a few seconds for the containers to fully start. The Web UI will be available at `http://localhost:5173`)*
-
-#### Seed the Database (Inside Docker)
-Even when running fully inside Docker, you need to migrate and seed the database on your first run:
-```bash
-docker exec -it velozity_api npm run db:migrate
-docker exec -it velozity_api npm run db:seed
-```
-
-#### Stop the Stack
-To completely shut down and remove the containers:
-```bash
-docker compose down
-```
 
 ---
 
